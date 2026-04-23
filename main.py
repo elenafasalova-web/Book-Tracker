@@ -8,16 +8,23 @@ from PyQt5.QtWidgets import (
 )
 
 DATA_FILE = 'books.json'
+def load_data(file_path=DATA_FILE):
+    try:
+        if os.path.exists(file_path):
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+    except json.JSONDecodeError:
+        # Можно вернуть пустой список или произвести логирование
+        return []
+    except Exception:
+        return []
 
-def load_data():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return []
-
-def save_data(data):
-    with open(DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+def save_data(data, file_path=DATA_FILE):
+    try:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+    except Exception:
+        pass
 
 class BookTracker(QWidget):
     def __init__(self):
@@ -145,23 +152,7 @@ class BookTracker(QWidget):
         self.genre_filter.clear()
         self.pages_filter.setCurrentIndex(0)
         self.apply_filters()
-def load_data():
-    try:
-        if os.path.exists(DATA_FILE):
-            with open(DATA_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
-    except json.JSONDecodeError:
-        QMessageBox.warning(None, "Ошибка", "Файл с данными повреждён или недопустим. Будут загружены пустые данные.")
-    except Exception as e:
-        QMessageBox.warning(None, "Ошибка", f"Ошибка при чтении файла: {e}")
-    return []
 
-def save_data(data):
-    try:
-        with open(DATA_FILE, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
-    except Exception as e:
-        QMessageBox.warning(None, "Ошибка", f"Ошибка при сохранении файла: {e}")
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = BookTracker()
