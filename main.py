@@ -145,7 +145,23 @@ class BookTracker(QWidget):
         self.genre_filter.clear()
         self.pages_filter.setCurrentIndex(0)
         self.apply_filters()
+def load_data():
+    try:
+        if os.path.exists(DATA_FILE):
+            with open(DATA_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+    except json.JSONDecodeError:
+        QMessageBox.warning(None, "Ошибка", "Файл с данными повреждён или недопустим. Будут загружены пустые данные.")
+    except Exception as e:
+        QMessageBox.warning(None, "Ошибка", f"Ошибка при чтении файла: {e}")
+    return []
 
+def save_data(data):
+    try:
+        with open(DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+    except Exception as e:
+        QMessageBox.warning(None, "Ошибка", f"Ошибка при сохранении файла: {e}")
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = BookTracker()
